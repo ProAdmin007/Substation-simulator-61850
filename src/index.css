@@ -1,0 +1,490 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d0f11;
+  color: #e6e8ea;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+  background: #3a3f44;
+  color: #e6e8ea;
+  border: 1px solid #565c62;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #4a5157;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.app-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.canvas-container {
+  position: absolute;
+  inset: 0;
+}
+
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(13, 15, 17, 0.85);
+  border-bottom: 1px solid #2c3033;
+  z-index: 5;
+}
+
+#crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  pointer-events: none;
+  /* A dark drop-shadow halo around the white cross reads against both a bright sky and a dark
+     panel — more reliable across browsers/GPUs than relying on mix-blend-mode compositing with
+     a WebGL canvas layer underneath. */
+  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.9));
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: '';
+  position: absolute;
+  background: #ffffff;
+}
+
+#crosshair::before {
+  width: 2px;
+  height: 100%;
+  left: 9px;
+}
+
+#crosshair::after {
+  height: 2px;
+  width: 100%;
+  top: 9px;
+}
+
+.interact-hint {
+  position: absolute;
+  top: calc(50% + 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 23, 26, 0.92);
+  border: 1px solid #2c3033;
+  color: #00d4ff;
+  padding: 6px 14px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.controls-bar {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #556677;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.top-bar h1 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.panel {
+  background: rgba(20, 23, 26, 0.92);
+  border: 1px solid #2c3033;
+  border-radius: 6px;
+  padding: 12px;
+  pointer-events: auto;
+}
+
+.panel h2 {
+  font-size: 14px;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9aa4ab;
+}
+
+.panel h3 {
+  font-size: 12px;
+  margin: 12px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9aa4ab;
+}
+
+.hmi-overlay {
+  position: absolute;
+  top: 52px;
+  left: 12px;
+  width: 260px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+  z-index: 4;
+}
+
+.hmi-voltage-level {
+  margin-bottom: 10px;
+}
+
+.hmi-busbar {
+  font-size: 12px;
+  color: #9aa4ab;
+  margin-bottom: 4px;
+}
+
+.hmi-bay-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hmi-bay-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.hmi-bay-row:hover {
+  background: #2c3033;
+}
+
+.hmi-bay-row.selected {
+  background: #3a3f44;
+}
+
+.hmi-bay-name {
+  flex: 1;
+}
+
+.hmi-bay-status {
+  color: #9aa4ab;
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hmi-transformer {
+  font-size: 12px;
+  color: #9aa4ab;
+  border-top: 1px solid #2c3033;
+  padding-top: 6px;
+}
+
+.event-alarm-list {
+  position: absolute;
+  top: 52px;
+  right: 12px;
+  width: 300px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+  z-index: 4;
+}
+
+.event-alarm-list ul,
+.event-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.alarm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 4px;
+  border-bottom: 1px solid #2c3033;
+  font-size: 13px;
+}
+
+.severity-critical {
+  color: #ff8080;
+}
+
+.severity-warning {
+  color: #f1c40f;
+}
+
+.event-log li {
+  padding: 4px 0;
+  border-bottom: 1px solid #22262a;
+  font-size: 12px;
+}
+
+.muted {
+  color: #9aa4ab;
+}
+
+.small {
+  font-size: 11px;
+}
+
+.scenario-controls {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  width: 260px;
+  z-index: 4;
+}
+
+.scenario-controls p {
+  margin: 4px 0 8px;
+}
+
+.bay-control-panel {
+  width: 420px;
+}
+
+.close-hint {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #556677;
+  text-align: right;
+}
+
+.bay-control-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close-button {
+  padding: 2px 8px;
+}
+
+.bay-control-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #2c3033;
+  font-size: 13px;
+}
+
+.bay-control-row span:first-child {
+  flex: 1;
+}
+
+.interlock-block-message {
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.5);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.ied-front-panel {
+  width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.ied-leds {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.led {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #565c62;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.led-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.led-off .led-dot {
+  opacity: 0.25;
+}
+
+.ied-display {
+  font-family: ui-monospace, Consolas, monospace;
+  background: #05070a;
+  border: 1px solid #2c3033;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 13px;
+}
+
+.tutorial-overlay {
+  width: 460px;
+}
+
+.tutorial-overlay ol {
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tutorial-overlay li {
+  margin-bottom: 6px;
+}
+
+/* ── Scenario controls + comms panel ── */
+.scenario-btn-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.scenario-btn-row button {
+  flex: 1;
+  font-size: 12px;
+}
+
+.link-button {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #3a6b7a;
+  color: #00d4ff;
+}
+
+.comms-panel {
+  width: 560px;
+  max-height: 82vh;
+  overflow-y: auto;
+}
+
+.comms-legend {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.comms-ied {
+  border: 1px solid #2c3033;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.comms-ied-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.comms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px;
+}
+
+.comms-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #14171a;
+  border: 1px solid #22262a;
+  border-radius: 3px;
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.comms-cell-label {
+  color: #9aa4ab;
+}
+
+.comms-ok {
+  color: #2ecc71;
+  font-weight: 600;
+}
+
+.comms-bad {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.comms-note {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.comms-note-info {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+}
+
+.comms-note-warn {
+  background: rgba(231, 76, 60, 0.12);
+  border: 1px solid rgba(231, 76, 60, 0.45);
+}
+
+.comms-actions {
+  margin-top: 8px;
+}
