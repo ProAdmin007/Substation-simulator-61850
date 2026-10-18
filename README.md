@@ -101,3 +101,13 @@ for the reasoning):
 - The demo topology ("Meadow Creek Substation") is a single hand-authored instance sized for the prototype
   (2 bays at 120 kV, 3 bays at 20 kV, 1 transformer) — not a general-purpose substation editor.
 - This is an educational simulation, not a certified protection/SCADA engineering tool.
+
+---
+
+<div align="center">
+
+## ☕ Support
+
+<a href="https://ko-fi.com/proadmin007" target="_blank"><img height="48" src="https://storage.ko-fi.com/cdn/kofi2.png?v=6" alt="Buy Me a Coffee at ko-fi.com" /></a>
+
+</div>
